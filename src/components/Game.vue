@@ -1,5 +1,8 @@
 <template>
-  <canvas id="game"></canvas>
+  <div class="board">
+    <button @click="reset" class="btn btn-gray">Reset</button>
+    <canvas id="game"></canvas>
+  </div>
 </template>
 
 <script lang="ts">
@@ -12,7 +15,8 @@ export default {
       context: {} as CanvasRenderingContext2D,
       width: 0,
       height: 0,
-      balls: [] as Array<Ball>
+      balls: [] as Array<Ball>,
+      animation: 0
     }
   },
   mounted() {
@@ -49,7 +53,7 @@ export default {
         this.balls[i].update(this.width, this.height)
       }
 
-      requestAnimationFrame(this.loop)
+      this.animation = requestAnimationFrame(this.loop)
     },
     drawBall(ball: Ball) {
       this.context.beginPath()
@@ -60,11 +64,35 @@ export default {
     random(min: number, max: number): number {
       var num = Math.floor(Math.random() * (max - min + 1)) + min
       return num
+    },
+    reset() {
+      cancelAnimationFrame(this.animation)
+      this.balls = []
+      this.initAllBalls()
+      this.loop()
     }
   }
 }
 </script>
 
 <style scoped>
+  .board {
+    @apply relative
+  }
 
+  .board canvas {
+    @apply cursor-move;
+  }
+
+  .board .btn {
+    @apply font-bold py-2 px-4 rounded absolute right-2 top-2;
+  }
+
+  .board .btn-gray {
+    @apply bg-gray-500 text-white;
+  }
+
+  .board .btn-gray:hover {
+    @apply bg-gray-700;
+  }
 </style>

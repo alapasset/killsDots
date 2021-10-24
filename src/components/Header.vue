@@ -5,7 +5,6 @@
       <h1>Kills Dots</h1>
     </div>
     <div class="menu">
-      <button class="btn btn-gray">Reset</button>
     </div>
   </header>
 </template>
@@ -52,17 +51,5 @@ export default {
 
   header .menu {
     @apply flex-grow flex flex-row justify-end pr-4;
-  }
-
-  header .menu .btn {
-    @apply font-bold py-2 px-4 rounded;
-  }
-
-  header .menu .btn-gray {
-    @apply bg-gray-500 text-white;
-  }
-
-  header .menu .btn-gray:hover {
-    @apply bg-gray-700;
   }
 </style>
