@@ -1,7 +1,7 @@
 <template>
   <div class="board">
     <button @click="reset" class="btn btn-gray">Reset</button>
-    <canvas id="game"></canvas>
+    <canvas id="game" @click="shoot($event)"></canvas>
   </div>
 </template>
 
@@ -11,6 +11,7 @@ import Ball from '../classes/Ball'
 export default {
   data() {
     return {
+      nbBalls: 25,
       canvas: {} as HTMLCanvasElement,
       context: {} as CanvasRenderingContext2D,
       width: 0,
@@ -30,7 +31,7 @@ export default {
   },
   methods: {
     initAllBalls() {
-      while (this.balls.length < 25) {
+      while (this.balls.length < this.nbBalls) {
         let size = this.random(10,20)
         let ball = new Ball(
           this.random(0 + size, this.width - size),
@@ -47,10 +48,10 @@ export default {
     loop() {
       this.context.fillStyle = 'rgba(0, 0, 0, 0.25)'
       this.context.fillRect(0, 0, this.width, this.height)
-
-      for (let i = 0; i < this.balls.length; i++) {
-        this.drawBall(this.balls[i])
-        this.balls[i].update(this.width, this.height)
+      let it = this.balls.length
+      while(it--) {
+        this.drawBall(this.balls[it])
+        this.balls[it].update(this.width, this.height)
       }
 
       this.animation = requestAnimationFrame(this.loop)
@@ -70,6 +71,30 @@ export default {
       this.balls = []
       this.initAllBalls()
       this.loop()
+    },
+    shoot(event: MouseEvent) {
+      const offsetX = this.canvas.offsetLeft
+      const offsetY = this.canvas.offsetTop
+      const clickX = event.clientX - offsetX
+      const clickY = event.clientY - (offsetY + 64)
+
+      let it = this.balls.length
+      while(it--) {
+        const dx = this.balls[it].x - clickX
+        const dy = this.balls[it].y - clickY
+        if (dx * dx + dy * dy <= this.balls[it].size * this.balls[it].size) {
+          let itDel = this.balls.length
+          const ballsArray = []
+          while(itDel--) {
+            if (itDel !== it) {
+              ballsArray.push(this.balls[itDel])
+            }
+          }
+          this.balls = ballsArray
+        }
+      }
+
+      return false
     }
   }
 }
@@ -85,7 +110,7 @@ export default {
   }
 
   .board .btn {
-    @apply font-bold py-2 px-4 rounded absolute right-2 top-2;
+    @apply font-bold py-2 px-4 rounded absolute right-2 -top-14;
   }
 
   .board .btn-gray {
